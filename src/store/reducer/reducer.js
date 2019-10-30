@@ -10,6 +10,15 @@ const onDeleteHandler = (state, action) => {
 
 }
 
+const onAddHandler = (state, action) => {
+
+    return {
+        ...state,
+        contacts: state.contacts.concat(action.details)
+
+    }
+}
+
 
 const reducer = (state, action) => {
 
@@ -18,6 +27,8 @@ const reducer = (state, action) => {
         case actionTypes.DELETE_CONTACT:
             return (onDeleteHandler(state, action))
 
+        case actionTypes.ADD_CONTACT:
+            return (onAddHandler(state, action))
 
         default:
             return state;
