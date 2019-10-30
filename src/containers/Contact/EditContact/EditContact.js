@@ -3,7 +3,7 @@ import Input from '../../../components/Input/Input';
 import { Consumer } from '../../../store/Provider/Provider';
 import * as actionTypes from '../../../store/actions/actionTypes';
 import axios from 'axios';
-class AddContact extends Component {
+class EditContact extends Component {
 
     state = {
 
@@ -11,6 +11,20 @@ class AddContact extends Component {
         email: '',
         phone: '',
         errors: {}
+    }
+
+    async componentDidMount() {
+        const { id } = this.props.match.params;
+
+        const res = await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`);
+        const contact = res.data;
+        console.log("contact", contact);
+        this.setState({
+            name: contact.name,
+            email: contact.email,
+            phone: contact.phone
+        })
+
     }
 
     inputChangeHandler = (event) => {
@@ -29,7 +43,7 @@ class AddContact extends Component {
 
         event.preventDefault();
         const { name, email, phone } = this.state;
-
+        const { id } = this.props.match.params;
         const details = {
             ...this.state
         }
@@ -49,8 +63,8 @@ class AddContact extends Component {
             return;
         }
 
-        axios.post("https://jsonplaceholder.typicode.com/users", details)
-            .then(res => dispatch({ type: actionTypes.ADD_CONTACT, details: res.data }));
+        axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, details)
+            .then(res => dispatch({ type: actionTypes.UPDATE_CONTACT, details: res.data }));
 
 
         this.setState({
@@ -61,7 +75,6 @@ class AddContact extends Component {
             errors: {}
         })
 
-        console.log(this.props);
         this.props.history.push("/");
 
     }
@@ -73,7 +86,7 @@ class AddContact extends Component {
                 {value => {
                     const { dispatch } = value;
                     return (<div className="card mb-3">
-                        <div className="card-header">Add Contact</div>
+                        <div className="card-header">Edit Contact</div>
                         <div className="card-body">
                             <form onSubmit={(event) => this.formSubmitHandler(dispatch, event)}>
 
@@ -92,7 +105,7 @@ class AddContact extends Component {
                                     inputValue={(event) => this.inputChangeHandler(event)}
                                     error={errors.phone} />
 
-                                <button className="btn btn-block btn-light">ADD</button>
+                                <button className="btn btn-block btn-light">Edit Contact</button>
                             </form>
                         </div>
                     </div>)
@@ -104,4 +117,4 @@ class AddContact extends Component {
     }
 }
 
-export default AddContact;
+export default EditContact;
